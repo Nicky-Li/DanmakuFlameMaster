@@ -247,26 +247,27 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 }
             });
             mDanmakuView.setOnDanmakuClickListener(new IDanmakuView.OnDanmakuClickListener() {
+
                 @Override
-                public void onDanmakuClick(BaseDanmaku latest) {
-                    Log.d("DFM", "onDanmakuClick text:" + latest.text);
+                public boolean onDanmakuClick(IDanmakus danmakus) {
+                    Log.d("DFM", "onDanmakuClick: danmakus size:" + danmakus.size());
+                    BaseDanmaku latest = danmakus.last();
+                    if (null != latest) {
+                        Log.d("DFM", "onDanmakuClick: text of latest danmaku:" + latest.text);
+                        return true;
+                    }
+                    return false;
                 }
 
                 @Override
-                public void onDanmakuClick(IDanmakus danmakus) {
-                    Log.d("DFM", "onDanmakuClick danmakus size:" + danmakus.size());
+                public boolean onViewClick(IDanmakuView view) {
+                    mMediaController.setVisibility(View.VISIBLE);
+                    return false;
                 }
             });
             mDanmakuView.prepare(mParser, mContext);
             mDanmakuView.showFPS(true);
             mDanmakuView.enableDanmakuDrawingCache(true);
-            ((View) mDanmakuView).setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View view) {
-                    mMediaController.setVisibility(View.VISIBLE);
-                }
-            });
         }
 
         if (mVideoView != null) {
@@ -385,7 +386,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         danmaku.padding = 5;
         danmaku.priority = 0;  // 可能会被各种过滤器过滤并隐藏显示
         danmaku.isLive = islive;
-        danmaku.time = mDanmakuView.getCurrentTime() + 1200;
+        danmaku.setTime(mDanmakuView.getCurrentTime() + 1200);
         danmaku.textSize = 25f * (mParser.getDisplayer().getDensity() - 0.6f);
         danmaku.textColor = Color.RED;
         danmaku.textShadowColor = Color.WHITE;
@@ -404,7 +405,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         danmaku.padding = 5;
         danmaku.priority = 1;  // 一定会显示, 一般用于本机发送的弹幕
         danmaku.isLive = islive;
-        danmaku.time = mDanmakuView.getCurrentTime() + 1200;
+        danmaku.setTime(mDanmakuView.getCurrentTime() + 1200);
         danmaku.textSize = 25f * (mParser.getDisplayer().getDensity() - 0.6f);
         danmaku.textColor = Color.RED;
         danmaku.textShadowColor = 0; // 重要：如果有图文混排，最好不要设置描边(设textShadowColor=0)，否则会进行两次复杂的绘制导致运行效率降低
